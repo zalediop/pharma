@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('sales', SaleController::class)->only(['index', 'store', 'show']);
     Route::apiResource('orders', OrderController::class)->only(['index', 'store', 'show']);
     Route::post('orders/{order}/receive', [OrderController::class, 'receive']);
+    Route::get('stocks', [StockController::class, 'index']);
     Route::post('stocks', [StockController::class, 'store']);
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::get('alerts', [AlertController::class, 'index']);

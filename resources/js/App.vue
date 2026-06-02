@@ -36,15 +36,39 @@ import Dashboard from './components/Dashboard.vue';
 import MedicinesPage from './components/MedicinesPage.vue';
 import SuppliersPage from './components/SuppliersPage.vue';
 import CustomersPage from './components/CustomersPage.vue';
+import PrescriptionsPage from './components/PrescriptionsPage.vue';
+import StockPage from './components/StockPage.vue';
+import SalesPage from './components/SalesPage.vue';
 
 const user = ref(null);
 const selectedTab = ref('dashboard');
-const tabs = [
-  { key: 'dashboard', label: 'Tableau de bord' },
-  { key: 'medicines', label: 'Médicaments' },
-  { key: 'suppliers', label: 'Fournisseurs' },
-  { key: 'customers', label: 'Clients' },
-];
+
+const tabs = computed(() => {
+  if (!user.value) return [];
+  
+  const allTabs = {
+    admin: [
+      { key: 'dashboard', label: 'Tableau de bord' },
+      { key: 'medicines', label: 'Médicaments' },
+      { key: 'suppliers', label: 'Fournisseurs' },
+      { key: 'customers', label: 'Clients' },
+    ],
+    pharmacien: [
+      { key: 'dashboard', label: 'Tableau de bord' },
+      { key: 'prescriptions', label: 'Ordonnances' },
+      { key: 'stock', label: 'Stock' },
+      { key: 'sales', label: 'Ventes' },
+      { key: 'medicines', label: 'Médicaments' },
+    ],
+    caissier: [
+      { key: 'dashboard', label: 'Tableau de bord' },
+      { key: 'sales', label: 'Ventes' },
+      { key: 'customers', label: 'Clients' },
+    ],
+  };
+  
+  return allTabs[user.value.role] || allTabs.caissier;
+});
 
 const activeComponent = computed(() => {
   return {
@@ -52,6 +76,9 @@ const activeComponent = computed(() => {
     medicines: MedicinesPage,
     suppliers: SuppliersPage,
     customers: CustomersPage,
+    prescriptions: PrescriptionsPage,
+    stock: StockPage,
+    sales: SalesPage,
   }[selectedTab.value] ?? Dashboard;
 });
 

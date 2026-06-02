@@ -46,16 +46,18 @@ class PrescriptionController extends Controller
     public function update(Request $request, Prescription $prescription)
     {
         $data = $request->validate([
-            'issued_at' => ['required', 'date'],
+            'issued_at' => ['nullable', 'date'],
             'notes' => ['nullable', 'string'],
+            'status' => ['nullable', 'in:pending,completed'],
             'medicines' => ['nullable', 'array'],
             'medicines.*.medicine_id' => ['required_with:medicines', 'exists:medicines,id'],
             'medicines.*.quantity' => ['required_with:medicines', 'integer', 'min:1'],
         ]);
 
         $prescription->update([
-            'issued_at' => $data['issued_at'],
+            'issued_at' => $data['issued_at'] ?? $prescription->issued_at,
             'notes' => $data['notes'] ?? $prescription->notes,
+            'status' => $data['status'] ?? $prescription->status,
         ]);
 
         if (! empty($data['medicines'])) {

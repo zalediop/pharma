@@ -13,6 +13,7 @@ class Prescription extends Model
         'customer_id',
         'issued_at',
         'notes',
+        'status',
     ];
 
     protected $casts = [

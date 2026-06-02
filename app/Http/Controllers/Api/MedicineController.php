@@ -12,6 +12,10 @@ class MedicineController extends Controller
     {
         $query = Medicine::query()->where('archived', false);
 
+        if ($request->query('with_stock')) {
+            $query->with('stocks');
+        }
+
         if ($search = $request->query('search')) {
             $query->where(fn ($q) => $q
                 ->where('name', 'like', "%{$search}%")

@@ -19,5 +19,22 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => User::ROLE_ADMIN,
         ]);
+
+        User::factory()->create([
+            'name' => 'Pharmacien',
+            'email' => 'pharmacien@example.com',
+            'password' => Hash::make('password'),
+            'role' => User::ROLE_PHARMACIEN,
+        ]);
+
+        User::factory()->create([
+            'name' => 'Caissier',
+            'email' => 'caissier@example.com',
+            'password' => Hash::make('password'),
+            'role' => User::ROLE_CAISSIER,
+        ]);
+
+        // Appeler le seeder de données de démonstration
+        $this->call(DemoDataSeeder::class);
     }
 }
