@@ -23,8 +23,8 @@ class DemoDataSeeder extends Seeder
         // Créer des médicaments
         $medicines = [
             [
-                'name' => 'Amoxicilline',
-                'dci' => 'Amoxicilline',
+                'name' => 'Versol',
+                'dci' => 'Versol',
                 'form' => 'Comprimé',
                 'dosage' => '500mg',
                 'category' => 'Antibiotique',
@@ -44,8 +44,8 @@ class DemoDataSeeder extends Seeder
                 'category' => 'Anti-inflammatoire',
             ],
             [
-                'name' => 'Metformine',
-                'dci' => 'Metformine',
+                'name' => 'Genset',
+                'dci' => 'Genset',
                 'form' => 'Comprimé',
                 'dosage' => '850mg',
                 'category' => 'Antidiabétique',
@@ -58,9 +58,9 @@ class DemoDataSeeder extends Seeder
                 'category' => 'Antihypertenseur',
             ],
             [
-                'name' => 'Atorvastatine',
-                'dci' => 'Atorvastatine',
-                'form' => 'Comprimé',
+                'name' => 'Grippex',
+                'dci' => 'Grippex',
+                'form' => 'Poudre',
                 'dosage' => '20mg',
                 'category' => 'Statine',
             ],
