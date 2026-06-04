@@ -82,33 +82,23 @@ const activeComponent = computed(() => {
   }[selectedTab.value] ?? Dashboard;
 });
 
+let authToken = null;
+
 function setToken(token) {
   if (token) {
-    localStorage.setItem('pharmacie_token', token);
+    authToken = token;
     window.axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   }
 }
 
 function clearToken() {
-  localStorage.removeItem('pharmacie_token');
+  authToken = null;
   delete window.axios.defaults.headers.common.Authorization;
 }
 
 async function loadUser() {
-  const token = localStorage.getItem('pharmacie_token');
-  if (!token) {
-    return;
-  }
-
-  setToken(token);
-
-  try {
-    const response = await window.axios.get('/api/auth/user');
-    user.value = response.data;
-  } catch (error) {
-    clearToken();
-    user.value = null;
-  }
+  // Ne pas restaurer automatiquement l'utilisateur après un rafraîchissement
+  return;
 }
 
 function handleAuthenticated(payload) {

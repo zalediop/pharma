@@ -11,7 +11,7 @@ class PrescriptionController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(Prescription::with(['customer', 'medicines'])->latest()->paginate(20));
+        return response()->json(Prescription::with(['customer', 'doctor', 'medicines'])->latest()->paginate(20));
     }
 
     public function store(Request $request)

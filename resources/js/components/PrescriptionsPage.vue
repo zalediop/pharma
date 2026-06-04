@@ -30,7 +30,7 @@
             <tbody class="divide-y divide-slate-200">
               <tr v-for="prescription in prescriptions.data" :key="prescription.id">
                 <td class="px-4 py-3">{{ prescription.customer?.name || '-' }}</td>
-                <td class="px-4 py-3">{{ prescription.doctor_name || '-' }}</td>
+                <td class="px-4 py-3">{{ prescription.doctor?.name || '-' }}</td>
                 <td class="px-4 py-3">{{ new Date(prescription.created_at).toLocaleDateString('fr-FR') }}</td>
                 <td class="px-4 py-3">
                   <span :class="['rounded px-2 py-1 text-xs font-semibold', prescription.status === 'pending' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800']">
@@ -59,7 +59,7 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600">Médecin</label>
-            <p class="text-sm font-semibold">{{ selectedPrescription.doctor_name }}</p>
+            <p class="text-sm font-semibold">{{ selectedPrescription.doctor?.name }}</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600">Médicaments</label>

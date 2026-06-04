@@ -3,7 +3,3 @@ window.axios = axios;
 
 window.axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL ?? '/';
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-const token = localStorage.getItem('pharmacie_token');
-if (token) {
-    window.axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-}

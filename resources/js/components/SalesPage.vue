@@ -22,7 +22,7 @@
             <tbody class="divide-y divide-slate-200">
               <tr v-for="sale in sales.data" :key="sale.id">
                 <td class="px-4 py-3">{{ sale.customer?.name || '-' }}</td>
-                <td class="px-4 py-3">{{ sale.items?.length || 0 }} article(s)</td>
+                <td class="px-4 py-3">{{ getMedicineNames(sale) }}</td>
                 <td class="px-4 py-3">{{ formatCFA(sale.total_amount) }}</td>
                 <td class="px-4 py-3">{{ new Date(sale.created_at).toLocaleDateString('fr-FR') }}</td>
                 <td class="px-4 py-3">
@@ -155,14 +155,31 @@ function getMedicineName(medicineId) {
   return med?.name || 'Inconnu';
 }
 
+function getMedicineNames(sale) {
+  return (sale.items || [])
+    .map((item) => `${item.medicine?.name || 'Inconnu'} (${item.quantity})`)
+    .join(', ') || '-';
+}
+
+function getTotalQuantity(sale) {
+  return (sale.items || []).reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+}
+
 function addItem() {
   if (!currentItem.medicine_id || !currentItem.quantity || !currentItem.unit_price) {
     return;
   }
+  const qty = parseInt(currentItem.quantity, 10);
+  const price = parseFloat(currentItem.unit_price);
+  
+  if (isNaN(qty) || isNaN(price) || qty <= 0 || price < 0) {
+    return;
+  }
+  
   form.items.push({
-    medicine_id: parseInt(currentItem.medicine_id),
-    quantity: parseInt(currentItem.quantity),
-    unit_price: parseFloat(currentItem.unit_price),
+    medicine_id: parseInt(currentItem.medicine_id, 10),
+    quantity: qty,
+    unit_price: price,
   });
   Object.assign(currentItem, { medicine_id: '', quantity: '', unit_price: '' });
 }

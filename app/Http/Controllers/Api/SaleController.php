@@ -13,7 +13,7 @@ class SaleController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(Sale::with(['customer', 'prescription', 'user'])->latest()->paginate(20));
+        return response()->json(Sale::with(['customer', 'prescription', 'user', 'items.medicine'])->latest()->paginate(20));
     }
 
     public function store(Request $request)

@@ -58,7 +58,7 @@ class DemoDataSeeder extends Seeder
                 'category' => 'Antihypertenseur',
             ],
             [
-                'name' => 'Grippex',
+                'name' => 'Atorvastatine',
                 'dci' => 'Grippex',
                 'form' => 'Poudre',
                 'dosage' => '20mg',
@@ -95,11 +95,13 @@ class DemoDataSeeder extends Seeder
         // Créer des clients
         $customers = Customer::factory(10)->create();
 
-        // Créer des ordonnances
-        foreach ($customers as $customer) {
-            if (rand(0, 1)) {
+        // Créer des ordonnances - forcer la création pour au moins 5 clients
+        $customerArray = $customers->toArray();
+        foreach ($customerArray as $idx => $customer) {
+            if ($idx < 5 || rand(0, 1)) {
                 $prescription = Prescription::create([
-                    'customer_id' => $customer->id,
+                    'customer_id' => $customer['id'],
+                    'doctor_id' => $doctors->random()->id,
                     'issued_at' => now()->subDays(rand(1, 30)),
                     'notes' => rand(0, 1) ? 'À prendre pendant les repas.' : null,
                     'status' => rand(0, 1) ? 'pending' : 'completed',

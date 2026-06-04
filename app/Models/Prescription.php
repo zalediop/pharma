@@ -25,6 +25,11 @@ class Prescription extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class);
+    }
+
     public function medicines()
     {
         return $this->belongsToMany(Medicine::class, 'prescription_medicine')

@@ -5,6 +5,7 @@
         <div>
           <h2 class="text-xl font-semibold">Clients</h2>
           <p class="text-slate-600">Gérer les coordonnées et l’historique des clients.</p>
+          <p v-if="error" class="mt-2 text-sm text-red-700">{{ error }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
           <input v-model="search" type="search" placeholder="Rechercher" class="rounded border border-slate-300 px-3 py-2" />
@@ -32,7 +33,7 @@
                 <td class="px-4 py-3">{{ customer.name }}</td>
                 <td class="px-4 py-3">{{ customer.email || '-' }}</td>
                 <td class="px-4 py-3">{{ customer.phone || '-' }}</td>
-                <td class="px-4 py-3">{{ customer.chronic_medication?.join(', ') || '-' }}</td>
+                <td class="px-4 py-3">{{ formatChronicMedication(customer.chronic_medication) }}</td>
                 <td class="px-4 py-3 space-x-2">
                   <button @click="editCustomer(customer)" class="rounded bg-sky-500 px-3 py-1 text-white hover:bg-sky-600">Modifier</button>
                   <button @click="deleteCustomer(customer.id)" class="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600">Supprimer</button>
@@ -82,10 +83,25 @@ const search = ref('');
 const editingId = ref(null);
 const form = reactive({ name: '', email: '', phone: '', chronic_medication: '' });
 const message = ref('');
+const error = ref('');
 
 async function loadCustomers() {
-  const response = await window.axios.get('/api/customers', { params: { search: search.value } });
-  customers.value = response.data;
+  error.value = '';
+
+  try {
+    const response = await window.axios.get('/api/customers', { params: { search: search.value } });
+    const payload = response.data;
+
+    if (Array.isArray(payload)) {
+      customers.value = { data: payload };
+      return;
+    }
+
+    customers.value = payload.data ? payload : { data: payload };
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Impossible de charger les clients.';
+    customers.value = { data: [] };
+  }
 }
 
 function resetForm() {
@@ -100,7 +116,7 @@ function editCustomer(customer) {
     name: customer.name,
     email: customer.email || '',
     phone: customer.phone || '',
-    chronic_medication: customer.chronic_medication?.join(', ') || '',
+    chronic_medication: formatChronicMedication(customer.chronic_medication),
   });
   message.value = '';
 }
@@ -136,6 +152,13 @@ async function deleteCustomer(id) {
 
 function cancelEdit() {
   resetForm();
+}
+
+function formatChronicMedication(value) {
+  if (!value) {
+    return '-';
+  }
+  return Array.isArray(value) ? value.join(', ') : String(value);
 }
 
 onMounted(loadCustomers);
