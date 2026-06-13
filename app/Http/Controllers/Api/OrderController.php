@@ -12,7 +12,8 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(PurchaseOrder::with(['supplier', 'items.medicine'])->latest()->paginate(20));
+        $limit = min((int) $request->query('limit', 20), 1000);
+        return response()->json(PurchaseOrder::with(['supplier', 'items.medicine'])->latest()->paginate($limit));
     }
 
     public function store(Request $request)

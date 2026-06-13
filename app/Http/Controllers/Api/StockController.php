@@ -10,7 +10,9 @@ class StockController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Stock::with(['medicine'])->latest();
+        $query = Stock::whereHas('medicine', fn ($q) => $q->where('archived', false))
+            ->with(['medicine'])
+            ->latest();
 
         if ($search = $request->query('search')) {
             $query->whereHas('medicine', fn ($q) => $q
@@ -19,7 +21,8 @@ class StockController extends Controller
             );
         }
 
-        return response()->json($query->paginate(20));
+        $limit = min((int) $request->query('limit', 20), 1000);
+        return response()->json($query->paginate($limit));
     }
 
     public function store(Request $request)

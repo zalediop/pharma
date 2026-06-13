@@ -11,13 +11,27 @@ class PrescriptionController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(Prescription::with(['customer', 'doctor', 'medicines'])->latest()->paginate(20));
+        $query = Prescription::with(['customer', 'doctor', 'medicines'])->latest();
+
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('customer', function ($cQuery) use ($search) {
+                    $cQuery->where('name', 'like', "%{$search}%");
+                })->orWhereHas('doctor', function ($dQuery) use ($search) {
+                    $dQuery->where('name', 'like', "%{$search}%");
+                })->orWhere('notes', 'like', "%{$search}%");
+            });
+        }
+
+        $limit = min((int) $request->query('limit', 20), 1000);
+        return response()->json($query->paginate($limit));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'customer_id' => ['required', 'exists:customers,id'],
+            'doctor_id' => ['nullable', 'exists:doctors,id'],
             'issued_at' => ['required', 'date'],
             'notes' => ['nullable', 'string'],
             'medicines' => ['required', 'array', 'min:1'],
@@ -27,6 +41,7 @@ class PrescriptionController extends Controller
 
         $prescription = Prescription::create([
             'customer_id' => $data['customer_id'],
+            'doctor_id' => $data['doctor_id'] ?? null,
             'issued_at' => $data['issued_at'],
             'notes' => $data['notes'] ?? '',
         ]);
@@ -46,6 +61,7 @@ class PrescriptionController extends Controller
     public function update(Request $request, Prescription $prescription)
     {
         $data = $request->validate([
+            'doctor_id' => ['nullable', 'exists:doctors,id'],
             'issued_at' => ['nullable', 'date'],
             'notes' => ['nullable', 'string'],
             'status' => ['nullable', 'in:pending,completed'],
@@ -55,6 +71,7 @@ class PrescriptionController extends Controller
         ]);
 
         $prescription->update([
+            'doctor_id' => $data['doctor_id'] ?? $prescription->doctor_id,
             'issued_at' => $data['issued_at'] ?? $prescription->issued_at,
             'notes' => $data['notes'] ?? $prescription->notes,
             'status' => $data['status'] ?? $prescription->status,

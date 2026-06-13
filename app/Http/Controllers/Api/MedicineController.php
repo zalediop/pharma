@@ -24,7 +24,8 @@ class MedicineController extends Controller
             );
         }
 
-        return response()->json($query->orderBy('name')->paginate(20));
+        $limit = min((int) $request->query('limit', 20), 1000);
+        return response()->json($query->orderBy('name')->paginate($limit));
     }
 
     public function store(Request $request)
